@@ -1,6 +1,10 @@
 /* global cordova, plugin, CSSPrimitiveValue */
 var cordova_exec = require('cordova/exec');
 var isSuspended = false;
+
+// Super nasty hack to handle unnecessary 50ms dom traversal when the map is hidden.
+window.preventMap = true;
+
 if (typeof Array.prototype.forEach !== "function") {
   (function() {
     Array.prototype.forEach = function(fn, thisArg) {
@@ -350,6 +354,11 @@ if (!cordova) {
     var checkRequested = false;
 
     function putHtmlElements() {
+
+      if(preventMap){
+        return false;
+      }
+
       var mapIDs = Object.keys(MAPS);
       if (isChecking) {
         checkRequested = true;
@@ -583,7 +592,7 @@ if (!cordova) {
         } else {
           clearInterval(timer);
         }
-      }, 50);
+      }, 1000);
     });
 
     //----------------------------------------------------
